@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be Social</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+}
+
+.header {
+    background: #1877f2;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: #1877f2;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: gray;
+    font-size: 14px;
+}
+
+.balance-box {
+    text-align: center;
+}
+
+.balance-title {
+    color: gray;
+    font-size: 16px;
+}
+
+.balance {
+    font-size: 46px;
+    font-weight: bold;
+    color: #1877f2;
+    margin-top: 10px;
+}
+
+.status {
+    text-align: center;
+    color: gray;
+    font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">Be Social</div>
+
+<div class="container">
+
+    <div class="card">
+        <div class="profile">
+            <div class="avatar" id="avatar">U</div>
+            <div>
+                <div class="username" id="username">Loading...</div>
+                <div class="subtitle">Social Creator</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card balance-box">
+        <div class="balance-title">Your Coin Balance</div>
+        <div class="balance">
+            <span id="balance">0</span> 🪙
+        </div>
+    </div>
+
+    <div class="status" id="status">Loading balance...</div>
+
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const user = tg.initDataUnsafe.user;
+
+if (user) {
+    document.getElementById("username").innerText =
+        user.first_name + (user.username ? " @" + user.username : "");
+
+    document.getElementById("avatar").innerText =
+        user.first_name.charAt(0).toUpperCase();
+
+    loadBalance(user.id);
+}
+
+function loadBalance(userId) {
+    fetch("https://api.telebotcreator.com/new-webhook?data=gAAAAABqBUWQV9c4rqU-0ihpc3pENejtxFxx149aRnfBmxBqz8hYVeENV0exi0H1W2Xwca3GUDUP1HwLIvjeQI8yP5Hu5M-V-XM3kPvjau6IgzuIe8NKTqIrykwLnju2Whhge7--1qrTUMaKEKOZf0bXM4vy58U7usnfh_H1EtCDkgkI9z3TFT0dbn9f-joUVI8hCU-nh8yA", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id: String(userId)
+        })
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("balance").innerText = data;
+        document.getElementById("status").innerText = "Balance synced successfully";
+    })
+    .catch(error => {
+        document.getElementById("status").innerText = "Failed to load balance";
+        console.log(error);
+    });
+}
+</script>
+
+</body>
+  </html>
