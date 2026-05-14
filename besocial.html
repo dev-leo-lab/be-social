@@ -133,6 +133,9 @@ if (user) {
         user.first_name.charAt(0).toUpperCase();
 
     loadBalance(user.id);
+} else {
+    document.getElementById("status").innerText =
+        "Open inside Telegram Mini App";
 }
 
 function loadBalance(userId) {
@@ -147,15 +150,27 @@ function loadBalance(userId) {
     })
     .then(response => response.text())
     .then(data => {
-        document.getElementById("balance").innerText = data;
-        document.getElementById("status").innerText = "Balance synced successfully";
+        console.log("Webhook response:", data);
+
+        let match = data.match(/BALANCE:(\d+(\.\d+)?)/);
+
+        if (match) {
+            document.getElementById("balance").innerText = match[1];
+            document.getElementById("status").innerText =
+                "Balance synced successfully";
+        } else {
+            document.getElementById("balance").innerText = "0";
+            document.getElementById("status").innerText =
+                "Balance not found";
+        }
     })
     .catch(error => {
-        document.getElementById("status").innerText = "Failed to load balance";
         console.log(error);
+        document.getElementById("status").innerText =
+            "Failed to load balance";
     });
 }
 </script>
 
 </body>
-  </html>
+</html>
